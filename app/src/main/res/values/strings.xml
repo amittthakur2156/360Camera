@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">360° Camera</string>
+    <string name="title_camera">360° CAMERA</string>
+    <string name="hint_normal">Move your phone slowly around</string>
+    <string name="hint_360_active">Rotating… keep the phone level and turn slowly</string>
+    <string name="btn_start_360">Start 360°</string>
+    <string name="btn_finish_360">Finish</string>
+    <string name="permission_rationale">Camera permission is required to use this app.</string>
+    <string name="open_settings">Open Settings</string>
+    <string name="gallery_title">Gallery</string>
+    <string name="no_photos">No photos yet. Capture something!</string>
+</resources>

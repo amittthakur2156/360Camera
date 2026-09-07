@@ -1,0 +1,222 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_dark">
+
+    <androidx.camera.view.PreviewView
+        android:id="@+id/previewView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+    <!--  Top bar (hidden while pano recording is active)  -->
+    <LinearLayout
+        android:id="@+id/topBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_top_bar"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="18dp"
+        android:paddingTop="40dp"
+        android:paddingBottom="30dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:letterSpacing="0.05"
+            android:text="@string/title_camera"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <ImageButton
+            android:id="@+id/btnGallery"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="Gallery"
+            android:src="@drawable/ic_gallery"
+            tools:ignore="HardcodedText,TouchTargetSizeCheck" />
+    </LinearLayout>
+    <!--  Bottom panel  -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@drawable/bg_bottom_panel"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingTop="60dp"
+        android:paddingBottom="34dp">
+
+        <TextView
+            android:id="@+id/tvHint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="@string/hint_normal"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageButton
+                android:id="@+id/btnCapture"
+                android:layout_width="82dp"
+                android:layout_height="82dp"
+                android:background="@drawable/capture_button"
+                android:contentDescription="Capture"
+                tools:ignore="HardcodedText" />
+            <!--  Overlaid square shown only while pano is actively recording  -->
+            <View
+                android:id="@+id/captureStopIcon"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:layout_gravity="center"
+                android:background="@drawable/ic_stop_square"
+                android:visibility="gone" />
+        </FrameLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnStart360"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="44dp"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="@color/accent"
+            android:text="@string/btn_start_360"
+            android:textColor="@color/white"
+            app:cornerRadius="24dp"
+            tools:ignore="TouchTargetSizeCheck" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnFinish360"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="44dp"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="@color/danger"
+            android:text="@string/btn_finish_360"
+            android:textColor="@color/white"
+            android:visibility="gone"
+            app:cornerRadius="24dp" />
+    </LinearLayout>
+    <!--  360 Pano capture overlay (hidden by default)  -->
+    <FrameLayout
+        android:id="@+id/panel360"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+        <!--  The guide band: dashed track -> live growing panorama -> progress line -> arrow  -->
+        <FrameLayout
+            android:id="@+id/guideContainer"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_gravity="center_vertical">
+            <!--  Live composited preview of captured frames so far  -->
+            <ImageView
+                android:id="@+id/ivLivePreview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitStart"
+                android:visibility="gone" />
+            <!--  Static dashed track (the "not yet covered" portion)  -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/dashed_line" />
+            <!--  Solid line showing how much has been covered so far, grows from left  -->
+            <View
+                android:id="@+id/progressLineSolid"
+                android:layout_width="0dp"
+                android:layout_height="3dp"
+                android:layout_gravity="center_vertical|start"
+                android:background="@color/accent" />
+            <!--  Moving direction arrow, travels along the guide line  -->
+            <ImageView
+                android:id="@+id/ivDirectionArrow"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_gravity="center_vertical|start"
+                android:src="@drawable/ic_arrow_forward" />
+        </FrameLayout>
+        <!--  Kept for compatibility with existing Kotlin refs; not visually shown  -->
+        <ProgressBar
+            android:id="@+id/progress360"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="1dp"
+            android:layout_height="1dp"
+            android:max="360"
+            android:visibility="invisible" />
+    </FrameLayout>
+    <!--  Pano result preview (shown right after stitching completes)  -->
+    <FrameLayout
+        android:id="@+id/panoResultOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#000000"
+        android:visibility="gone">
+
+        <com.example.threesixtycamera.Panorama360View
+            android:id="@+id/ivPanoResult"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="Panorama result" />
+
+        <ImageButton
+            android:id="@+id/btnClosePanoResult"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_gravity="top|start"
+            android:layout_margin="20dp"
+            android:background="#88000000"
+            android:contentDescription="Close"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            tools:ignore="HardcodedText" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnViewInGallery"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="44dp"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="40dp"
+            android:backgroundTint="@color/accent"
+            android:text="View in Gallery"
+            android:textColor="@color/white"
+            app:cornerRadius="24dp" />
+    </FrameLayout>
+    <!--  Permission-denied overlay  -->
+    <LinearLayout
+        android:id="@+id/permissionOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/bg_dark"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="32dp"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:gravity="center"
+            android:text="@string/permission_rationale"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnOpenSettings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/accent"
+            android:text="@string/open_settings" />
+    </LinearLayout>
+</FrameLayout>
